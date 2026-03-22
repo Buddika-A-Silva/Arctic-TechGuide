@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="TechCore Blog — Expert tech guides, tutorials, and insights from certified engineers."/>
+  <title>Tech Tips & Guides</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <!-- new unified font across site -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    /* ============================================================
+       CSS Variables — same palette as main site
+       ============================================================ */
+    :root {
+      --bg:            #0a0d16;
+      --bg-2:          #0f141f;
+      --bg-3:          #141a28;
+      --surface:       #1a1f2e;
+      --surface-2:     #1f2536;
+      --border:        rgba(255,255,255,0.06);
+      --border-bright: rgba(255,255,255,0.12);
+
+      --accent:        #0fa8ff;
+      --accent-light:  #43b6ff;
+      --accent-glow:   rgba(15,168,255,0.4);
+      --accent-2:      #679eff;
+
+      --text-primary:  #f7fbff;
+      --text-secondary:#a4b8db;
+      --text-muted:    #7f8ca5;
+
+      --radius-sm:  6px;
+      --radius:     12px;
+      --radius-lg:  20px;
+      --radius-xl:  28px;
+
+      --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+      --transition:  0.25s cubic-bezier(.4,0,.2,1);
+      --font-display: 'Inter', sans-serif;
+      --font-body:    'Inter', sans-serif;
+    }
+
+    /* ── Reset ───────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a  { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    img { max-width: 100%; display: block; }
+    .container { width: min(1180px, 100% - 2.5rem); margin-inline: auto; }
+
+    /* ============================================================
+       NAVIGATION
+       ============================================================ */
+    .nav-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,14,23,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .navbar {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 68px;
+      width: min(1180px, 100% - 2.5rem);
+      margin-inline: auto;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.6rem; }
+    .logo-mark {
+      display: grid; place-items: center;
+      width: 38px; height: 38px;
+      background: var(--accent); color: #fff;
+      font-family: var(--font-display); font-weight: 800; font-size: 0.85rem;
+      border-radius: 8px; letter-spacing: 0.05em; flex-shrink: 0;
+    }
+    .logo-text { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+
+    .nav-links { display: flex; align-items: center; gap: 0.25rem; }
+    .nav-link {
+      padding: 0.45rem 0.85rem; font-size: 0.88rem; font-weight: 500;
+      color: var(--text-secondary); border-radius: var(--radius-sm);
+      transition: color var(--transition), background var(--transition);
+    }
+    .nav-link:hover, .nav-link.active { color: var(--text-primary); background: var(--surface); }
+    .nav-cta {
+      margin-left: 0.5rem; padding: 0.45rem 1rem;
+      background: var(--accent); color: #fff; border-radius: var(--radius-sm);
+      font-size: 0.88rem; font-weight: 600; font-family: var(--font-display);
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+    .nav-cta:hover { background: var(--accent-light); transform: translateY(-1px); box-shadow: 0 4px 16px var(--accent-glow); }
+
+    .menu-toggle {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 6px; border-radius: var(--radius-sm);
+    }
+    .menu-toggle span { display: block; width: 22px; height: 2px; background: var(--text-secondary); border-radius: 2px; transition: all var(--transition); }
+    .menu-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .menu-toggle.open span:nth-child(2) { opacity: 0; }
+    .menu-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ============================================================
+       BLOG HERO / PAGE HEADER
+       ============================================================ */
+    .blog-hero {
+      position: relative;
+      padding: 5rem 0 4rem;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% -10%, rgba(15,168,255,0.18) 0%, transparent 65%),
+        linear-gradient(rgba(15,168,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,168,255,0.05) 1px, transparent 1px);
+      background-size: auto, 40px 40px, 40px 40px;
+      pointer-events: none;
+    }
+    .blog-hero-inner {
+      position: relative; z-index: 1;
+      text-align: center; max-width: 680px; margin-inline: auto;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.3rem 0.85rem;
+      background: rgba(15,168,255,0.12); border: 1px solid rgba(15,168,255,0.35);
+      border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+      color: var(--accent-light); letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      animation: fadeUp 0.5s ease both;
+    }
+    .eyebrow-dot {
+      width: 7px; height: 7px; background: var(--accent-light);
+      border-radius: 50%; animation: pulse 2s infinite;
+    }
+    .blog-hero h1 {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      line-height: 1.1; letter-spacing: -0.025em;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+    .blog-hero h1 span {
+      background: linear-gradient(135deg, var(--accent-light), var(--accent-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .blog-hero p {
+      font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7;
+      max-width: 520px; margin: 0 auto 2rem;
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+
+    /* Search bar */
+    .search-wrap {
+      position: relative; max-width: 480px; margin-inline: auto;
+      animation: fadeUp 0.5s 0.3s ease both;
+    }
+    .search-icon {
+      position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); pointer-events: none;
+    }
+    .search-input {
+      width: 100%; padding: 0.85rem 1rem 0.85rem 2.75rem;
+      background: var(--surface); border: 1px solid var(--border-bright);
+      border-radius: var(--radius-lg); color: var(--text-primary);
+      font-family: var(--font-body); font-size: 0.93rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,217,255,0.15);
+    }
+
+    /* ============================================================
+       CATEGORY FILTER TABS
+       ============================================================ */
+    .filter-bar {
+      padding: 2rem 0 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-inner {
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      overflow-x: auto; padding-bottom: 0; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-inner::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      flex-shrink: 0;
+      padding: 0.5rem 1.1rem;
+      background: transparent; border: 1px solid transparent;
+      border-radius: 999px; font-family: var(--font-body); font-size: 0.83rem;
+      font-weight: 500; color: var(--text-muted); cursor: pointer;
+      transition: all var(--transition);
+      position: relative; bottom: -1px;
+    }
+    .filter-btn {
+      flex-shrink: 0;
+      padding: 0.65rem 1.2rem;
+      background: linear-gradient(135deg, rgba(9, 58, 106, 0.22), rgba(17, 70, 114, 0.3));
+      border: 1px solid rgba(72, 195, 255, 0.3);
+      border-radius: 999px; font-family: var(--font-body); font-size: 0.85rem;
+      font-weight: 600; color: var(--text-secondary); cursor: pointer;
+      transition: transform var(--transition), background var(--transition), box-shadow var(--transition), border-color var(--transition), color var(--transition);
+      position: relative; bottom: -1px;
+      box-shadow: 0 0 0 1px rgba(72,195,255,0.07);
+    }
+    .filter-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--accent-light);
+      background: linear-gradient(135deg, rgba(15,168,255,0.3), rgba(67,182,255,0.16));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(15,168,255,0.24);
+    }
+    .filter-btn.active {
+      color: #fff;
+      border-color: var(--accent);
+      background: linear-gradient(140deg, var(--accent), var(--accent-light));
+      box-shadow: 0 0 14px rgba(15,168,255,0.45), inset 0 0 0 1px rgba(255,255,255,0.18);
+    }
+
+    /* ============================================================
+       MAIN LAYOUT — sidebar + posts
+       ============================================================ */
+    .blog-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2.5rem;
+      padding-block: 3.5rem;
+      align-items: start;
+    }
+
+    /* ============================================================
+       FEATURED POST (large card at top)
+       ============================================================ */
+    .featured-post {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+      transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+    .featured-post:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-card), 0 0 0 1px rgba(0,217,255,0.15);
+    }
+    .featured-img {
+      min-height: 320px;
+      background:
+        linear-gradient(135deg, #0b1f4a 0%, #1a3a7c 40%, #0e2557 100%);
+      position: relative; overflow: hidden;
+    }
+    .featured-img::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(45deg, rgba(0,217,255,0.06) 0px, rgba(0,217,255,0.06) 1px, transparent 1px, transparent 18px),
+        radial-gradient(circle at 30% 70%, rgba(0,184,212,0.2) 0%, transparent 55%);
+    }
+    /* Decorative circuit nodes */
+    .featured-img-deco {
+      position: absolute; inset: 0; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .deco-svg { width: 200px; height: 200px; opacity: 0.18; }
+
+    .featured-body {
+      padding: 2.25rem 2rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .post-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 1rem;
+      width: fit-content;
+    }
+    .badge--featured { background: rgba(15,168,255,0.17); color: var(--accent-light); border: 1px solid rgba(15,168,255,0.35); }
+    .badge--hardware { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+    .badge--software { background: rgba(168,85,247,0.12); color: #c084fc; border: 1px solid rgba(168,85,247,0.25); }
+    .badge--mobile   { background: rgba(6,182,212,0.12); color: #22d3ee; border: 1px solid rgba(6,182,212,0.25); }
+    .badge--network  { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+    .badge--web      { background: rgba(251,146,60,0.12); color: #fb923c; border: 1px solid rgba(251,146,60,0.25); }
+    .badge--power    { background: rgba(250,204,21,0.12); color: #fbbf24; border: 1px solid rgba(250,204,21,0.25); }
+    .badge--security { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+
+    .featured-body h2 {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 1.5rem; line-height: 1.25; letter-spacing: -0.02em;
+      margin-bottom: 0.85rem;
+    }
+    .featured-body p {
+      font-size: 0.93rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.5rem;
+    }
+    .post-meta {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.25rem;
+    }
+    .post-meta-dot { width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%; }
+    .read-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.88rem; font-weight: 600; color: var(--accent-light);
+      transition: gap var(--transition), color var(--transition);
+    }
+    .read-link:hover { gap: 0.7rem; color: #fff; }
+    .read-link svg { transition: transform var(--transition); }
+    .read-link:hover svg { transform: translateX(3px); }
+
+    /* ============================================================
+       POST GRID
+       ============================================================ */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    .post-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+    .post-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 100% 80% at 50% -5%, rgba(0,217,255,0.08) 0%, transparent 60%);
+      opacity: 0; transition: opacity var(--transition);
+      pointer-events: none; z-index: 0;
+    }
+    .post-card:hover { border-color: var(--border-bright); transform: translateY(-5px); box-shadow: var(--shadow-card); }
+    .post-card:hover::before { opacity: 1; }
+    .post-card:hover .post-read-link { color: var(--accent-light); gap: 0.6rem; }
+
+    /* Post thumbnail — CSS-drawn */
+    .post-thumb {
+      height: 170px; position: relative; overflow: hidden; flex-shrink: 0;
+    }
+    .post-thumb-bg { width: 100%; height: 100%; transition: transform 0.4s ease; }
+    .post-thumb-img { width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease; }
+    .post-card:hover .post-thumb-img { transform: scale(1.05); }
+    .post-card:hover .post-thumb-bg { transform: scale(1.05); }
+
+    /* Unique gradient backgrounds per category */
+    .thumb--1 { background: linear-gradient(135deg, #0f8dff 0%, #0fa8ff 45%, #67a6ff 100%); }
+    .thumb--2 { background: linear-gradient(135deg,#1a0b3f 0%,#3d1f80 60%,#1a0a3e 100%); }
+    .thumb--3 { background: linear-gradient(135deg,#041e25 0%,#0a4a5c 60%,#031e25 100%); }
+    .thumb--4 { background: linear-gradient(135deg,#0b2218 0%,#164d32 60%,#091f16 100%); }
+    .thumb--5 { background: linear-gradient(135deg,#271208 0%,#5c2e0a 60%,#271208 100%); }
+    .thumb--6 { background: linear-gradient(135deg,#280c0c 0%,#6b1515 60%,#240b0b 100%); }
+    .thumb--7 { background: linear-gradient(135deg,#1a1208 0%,#4a3410 60%,#1a1208 100%); }
+    .thumb--8 { background: linear-gradient(135deg,#0a0e17 0%,#172040 60%,#0a0e17 100%); }
+
+    /* Pattern overlay on thumbnails */
+    .post-thumb-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        60deg,
+        rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
+        transparent 1px, transparent 16px
+      );
+    }
+    /* Thumb icon */
+    .thumb-icon {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 48px; height: 48px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius); display: grid; place-items: center;
+      color: rgba(255,255,255,0.4);
+    }
+    .thumb-icon svg { width: 22px; height: 22px; }
+
+    .post-body {
+      padding: 1.25rem 1.25rem 1.5rem;
+      display: flex; flex-direction: column; flex: 1; position: relative; z-index: 1;
+    }
+    .post-body .post-badge { margin-bottom: 0.65rem; }
+    .post-card h3 {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.97rem;
+      line-height: 1.4; margin-bottom: 0.6rem; color: var(--text-primary);
+    }
+    .post-card p {
+      font-size: 0.85rem; color: var(--text-secondary); line-height: 1.65;
+      flex: 1; margin-bottom: 1.1rem;
+    }
+    .post-footer {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+      margin-top: auto;
+    }
+    .post-read-link {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
+      transition: color var(--transition), gap var(--transition);
+    }
+
+    /* Difficulty badge */
+    .diff-badge {
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em;
+      text-transform: uppercase; padding: 0.2rem 0.55rem; border-radius: 4px;
+    }
+    .diff--beginner { background: rgba(34,197,94,0.1); color: #4ade80; }
+    .diff--intermediate { background: rgba(251,146,60,0.1); color: #fb923c; }
+    .diff--advanced { background: rgba(239,68,68,0.1); color: #f87171; }
+
+    /* ============================================================
+       PAGINATION
+       ============================================================ */
+    .pagination {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.4rem; padding-top: 2.5rem;
+    }
+    .page-btn {
+      display: grid; place-items: center;
+      width: 38px; height: 38px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600;
+      color: var(--text-secondary); cursor: pointer;
+      transition: all var(--transition); font-family: var(--font-display);
+    }
+    .page-btn:hover { border-color: var(--accent); color: var(--accent-light); background: rgba(15,168,255,0.12); }
+    .page-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .page-btn--nav { width: auto; padding: 0 0.85rem; gap: 0.3rem; display: flex; align-items: center; }
+
+    /* ============================================================
+       SIDEBAR
+       ============================================================ */
+    .sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    .sidebar-widget {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+    .widget-title {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;
+      letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-primary);
+      margin-bottom: 1.25rem; padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Newsletter widget */
+    .newsletter-widget {
+      background: linear-gradient(135deg, rgba(0,217,255,0.15) 0%, rgba(0,184,212,0.08) 100%);
+      border-color: rgba(0,217,255,0.25);
+    }
+    .newsletter-widget p {
+      font-size: 0.87rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;
+    }
+    .newsletter-form { display: flex; flex-direction: column; gap: 0.6rem; }
+    .nl-input {
+      width: 100%; padding: 0.65rem 0.9rem;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border-bright);
+      border-radius: var(--radius-sm); color: var(--text-primary);
+      font-family: var(--font-body); font-size: 0.87rem; outline: none;
+      transition: border-color var(--transition);
+    }
+    .nl-input::placeholder { color: var(--text-muted); }
+    .nl-input:focus { border-color: var(--accent); }
+    .nl-btn {
+      width: 100%; padding: 0.65rem;
+      background: var(--accent); color: #fff; border: none;
+      border-radius: var(--radius-sm); font-family: var(--font-display);
+      font-weight: 700; font-size: 0.87rem; cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .nl-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+    /* Popular posts */
+    .popular-list { display: flex; flex-direction: column; gap: 1rem; }
+    .popular-item {
+      display: flex; gap: 0.85rem; align-items: flex-start;
+      padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+    }
+    .popular-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .popular-num {
+      font-family: var(--font-display); font-weight: 800; font-size: 1.3rem;
+      color: rgba(0,217,255,0.3); line-height: 1; flex-shrink: 0; width: 24px;
+    }
+    .popular-info { flex: 1; }
+    .popular-info h4 {
+      font-family: var(--font-display); font-weight: 600; font-size: 0.85rem;
+      line-height: 1.35; margin-bottom: 0.3rem;
+      transition: color var(--transition);
+    }
+    .popular-item:hover h4 { color: var(--accent-light); cursor: pointer; }
+    .popular-info span { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* Tags cloud */
+    .tags-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag-pill {
+      padding: 0.28rem 0.75rem; border: 1px solid var(--border-bright);
+      border-radius: 999px; font-size: 0.78rem; color: var(--text-secondary);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .tag-pill:hover { border-color: var(--accent); color: var(--accent-light); background: rgba(0,217,255,0.08); }
+    .tag-pill.active { border-color: var(--accent); color: #fff; background: rgba(0,217,255,0.25); }
+
+    /* Authors widget */
+    .authors-list { display: flex; flex-direction: column; gap: 0.85rem; }
+    .author-item { display: flex; align-items: center; gap: 0.75rem; }
+    .author-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: grid; place-items: center; font-family: var(--font-display);
+      font-weight: 800; font-size: 0.85rem; flex-shrink: 0;
+    }
+    .av--1 { background: linear-gradient(135deg, #00d9ff, #00b8d4); color: #000; }
+    .av--2 { background: linear-gradient(135deg, #7c3aed, #ec4899); color: #fff; }
+    .av--3 { background: linear-gradient(135deg, #059669, #06b6d4); color: #fff; }
+    .author-info { flex: 1; }
+    .author-info strong { display: block; font-size: 0.87rem; font-weight: 600; }
+    .author-info span { font-size: 0.78rem; color: var(--text-muted); }
+    .author-count {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.8rem;
+      color: var(--accent-light);
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .footer {
+      background: var(--bg-2); border-top: 1px solid var(--border);
+      padding-top: 3.5rem; margin-top: 2rem;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1.5fr 1.5fr;
+      gap: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--border);
+    }
+    .footer-brand { max-width: 250px; }
+    .footer-logo  { margin-bottom: 0.85rem; }
+    .footer-tagline { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.65; margin-bottom: 1.25rem; }
+    .social-links { display: flex; gap: 0.5rem; }
+    .social-link {
+      display: grid; place-items: center; width: 34px; height: 34px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text-muted);
+      transition: all var(--transition);
+    }
+    .social-link:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: translateY(-2px); }
+    .footer-heading {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.82rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-primary);
+      margin-bottom: 1.1rem;
+    }
+    .footer-nav ul, .footer-contact ul { display: flex; flex-direction: column; gap: 0.55rem; }
+    .footer-nav a { font-size: 0.87rem; color: var(--text-secondary); transition: color var(--transition); }
+    .footer-nav a:hover { color: var(--accent-light); }
+    .footer-contact { font-style: normal; }
+    .footer-contact li { display: flex; align-items: flex-start; gap: 0.55rem; font-size: 0.87rem; color: var(--text-secondary); }
+    .footer-contact svg { flex-shrink: 0; margin-top: 2px; color: var(--accent-light); }
+    .footer-bottom { padding-block: 1.1rem; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:0.5; transform:scale(0.8); }
+    }
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.visible { opacity:1; transform:none; }
+    .rd1{transition-delay:0.05s} .rd2{transition-delay:0.12s}
+    .rd3{transition-delay:0.18s} .rd4{transition-delay:0.25s}
+    .rd5{transition-delay:0.3s}  .rd6{transition-delay:0.38s}
+    .rd7{transition-delay:0.42s} .rd8{transition-delay:0.48s}
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1024px) {
+      .blog-layout { grid-template-columns: 1fr; }
+      .sidebar { display: grid; grid-template-columns: repeat(2, 1fr); }
+      .newsletter-widget { grid-column: span 2; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .footer-brand { max-width: 100%; }
+    }
+    @media (max-width: 768px) {
+      .featured-post { grid-template-columns: 1fr; }
+      .featured-img  { min-height: 220px; }
+      .posts-grid    { grid-template-columns: 1fr; }
+      .sidebar       { grid-template-columns: 1fr; }
+      .newsletter-widget { grid-column: span 1; }
+    }
+    @media (max-width: 700px) {
+      .menu-toggle { display: flex; }
+      .nav-links {
+        position: fixed; inset: 68px 0 0; flex-direction: column;
+        align-items: stretch; background: var(--bg);
+        padding: 1.5rem 1.25rem; gap: 0.25rem;
+        transform: translateX(100%); transition: transform var(--transition);
+        z-index: 99; border-top: 1px solid var(--border);
+      }
+      .nav-links.open { transform: translateX(0); }
+      .nav-link { padding: 0.75rem 1rem; font-size: 1rem; }
+      .nav-cta   { margin: 0.5rem 0 0; text-align: center; padding: 0.8rem; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== NAVIGATION ===================== -->
+  <header class="nav-header" role="banner">
+    <nav class="navbar" aria-label="Main navigation">
+      <!--a href="index.html" class="nav-logo" aria-label="TechCore Home">
+        <span class="logo-mark">TC</span>
+        <span class="logo-text">TechCore</span>
+      </a>-->
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks" role="list">
+        <!--<li><a href="index.html#home" class="nav-link active">Home</a></li>-->
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ===================== PAGE HEADER ===================== -->
+    <section class="blog-hero" aria-label="Blog header">
+      <div class="blog-hero-inner container">
+        <div class="hero-eyebrow">
+          <span class="eyebrow-dot" aria-hidden="true"></span>
+          Tech Guides &amp; Tutorials
+        </div>
+        <h1>Learn it. Test it. Build it. <br> <span>Fix It Right.</span></h1>
+        <p>Practical guides, deep dives, and step-by-step tutorials from our certified engineers — built for real-world tech challenges.</p>
+        <div class="search-wrap" role="search">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" class="search-input" placeholder="Search guides, tutorials, topics…" aria-label="Search blog posts" id="searchInput"/>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CATEGORY FILTERS ===================== -->
+    <div class="filter-bar" role="navigation" aria-label="Filter posts by category">
+      <div class="container">
+        <div class="filter-inner" role="list">
+          <button class="filter-btn active" data-filter="all"      role="listitem">All Posts</button>
+         <!-- <button class="filter-btn"        data-filter="hardware" role="listitem">Hardware</button>-->
+          <button class="filter-btn"        data-filter="Cloud Technology" role="listitem">Cloud Technology</button>
+          <button class="filter-btn"        data-filter="software" role="listitem">Software</button>
+          <button class="filter-btn"        data-filter="mobile"   role="listitem">Mobile</button>
+          <button class="filter-btn"        data-filter="network"  role="listitem">Networking</button>
+          <button class="filter-btn"        data-filter="web"      role="listitem">Web Dev</button>
+          <button class="filter-btn"        data-filter="power"    role="listitem">Power Apps</button>
+          <button class="filter-btn"        data-filter="security" role="listitem">Security</button>
+          
+        </div>
+        
+      </div>
+      <br>
+    </div>
+
+    <!-- ===================== BLOG LAYOUT ===================== -->
+    <div class="container">
+      <div class="blog-layout">
+
+        <!-- ── Main posts column ── -->
+        <div class="posts-column">
+
+          <!-- FEATURED POST -->
+          <article class="featured-post reveal" data-category="hardware" aria-label="Featured post">
+            <div class="featured-img">
+              <div class="featured-img-deco" aria-hidden="true">
+                <svg class="deco-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="40" y="40" width="120" height="80" rx="8" stroke="white" stroke-width="2"/>
+                  <rect x="55" y="52" width="90" height="56" rx="4" stroke="white" stroke-width="1.5"/>
+                  <line x1="85" y1="120" x2="85" y2="140" stroke="white" stroke-width="2"/>
+                  <line x1="115" y1="120" x2="115" y2="140" stroke="white" stroke-width="2"/>
+                  <line x1="65" y1="140" x2="135" y2="140" stroke="white" stroke-width="2"/>
+                  <circle cx="100" cy="80" r="16" stroke="white" stroke-width="1.5"/>
+                  <circle cx="100" cy="80" r="6"  fill="white" opacity="0.5"/>
+                  <line x1="100" y1="64" x2="100" y2="58" stroke="white" stroke-width="1.5"/>
+                  <line x1="100" y1="96" x2="100" y2="102" stroke="white" stroke-width="1.5"/>
+                  <line x1="84"  y1="80" x2="78"  y2="80" stroke="white" stroke-width="1.5"/>
+                  <line x1="116" y1="80" x2="122" y2="80" stroke="white" stroke-width="1.5"/>
+                </svg>
+              </div>
+            </div>
+            <div class="featured-body">
+              <span class="post-badge badge--featured">⭐ Featured</span>
+              <div class="post-meta">
+                <time datetime="2025-06-18">18 Jun 2025</time>
+                <span class="post-meta-dot"></span>
+                <span>8 min read</span>
+                <span class="post-meta-dot"></span>
+                <span class="diff-badge diff--intermediate">Intermediate</span>
+              </div>
+              <h2>The Complete Laptop Repair Checklist: From Boot Failure to Full Recovery</h2>
+              <p>When a business laptop won't start, every minute costs money. Our senior engineers share the exact 12-step diagnostic framework used in our workshop — covering BIOS, power rails, memory, and OS recovery — so you can identify the fault and fix it fast.</p>
+              <a href="#" class="read-link" aria-label="Read: The Complete Laptop Repair Checklist">
+                Read Full Guide
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </a>
+            </div>
+          </article>
+
+          <!-- POST GRID -->
+          <div class="posts-grid" id="postsGrid" role="list">
+
+            <!-- Post 1 -->
+            <article class="post-card reveal rd1" data-category="software" role="listitem">
+              <div class="post-thumb">
+                <div class="post-thumb-bg thumb--2"></div>
+                <div class="thumb-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+              </div>
+              <div class="post-body">
+                <span class="post-badge badge--software">Software</span>
+                <div class="post-meta">
+                  <time datetime="2025-06-12">12 Jun 2025</time>
+                  <span class="post-meta-dot"></span>
+                  <span>5 min</span>
+                </div>
+                <h3>How to Remove Stubborn Malware Without Reinstalling Windows</h3>
+                <p>Ransomware, rootkits, and PUPs that survive a simple antivirus scan — here's the offline boot toolkit approach our engineers rely on.</p>
+                <div class="post-footer">
+                  <a href="#" class="post-read-link" aria-label="Read: How to Remove Stubborn Malware">Read Guide →</a>
+                  <span class="diff-badge diff--intermediate">Intermediate</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 2 -->
+            <article class="post-card reveal rd2" data-category="mobile" role="listitem">
+              <div class="post-thumb">
+                <div class="post-thumb-bg thumb--3"></div>
+                <div class="thumb-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                </div>
+              </div>
+              <div class="post-body">
+                <span class="post-badge badge--mobile">Mobile</span>
+                <div class="post-meta">
+                  <time datetime="2025-06-05">5 Jun 2025</time>
+                  <span class="post-meta-dot"></span>
+                  <span>4 min</span>
+                </div>
+                <h3>iPhone vs Samsung Screen Replacement: What's Different Under the Hood</h3>
+                <p>OLED ribbon connectors, Face ID calibration, Samsung's adhesive traps — a side-by-side teardown guide for cautious DIYers.</p>
+                <div class="post-footer">
+                  <a href="#" class="post-read-link" aria-label="Read: Screen Replacement Guide">Read Guide →</a>
+                  <span class="diff-badge diff--advanced">Advanced</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 3 -->
+            <article class="post-card reveal rd3" data-category="power" role="listitem">
+              <div class="post-thumb">
+                <div class="post-thumb-bg thumb--5"></div>
+                <div class="thumb-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+              </div>
+              <div class="post-body">
+                <span class="post-badge badge--power">Power Apps</span>
+                <div class="post-meta">
+                  <time datetime="2025-05-28">28 May 2025</time>
+                  <span class="post-meta-dot"></span>
+                  <span>7 min</span>
+                </div>
+                <h3>Build a Leave-Request App in Power Apps — From Zero to Deployed</h3>
+                <p>A complete walkthrough: canvas app UI, SharePoint data source, Power Automate approval flow, and Teams notification — no code required.</p>
+                <div class="post-footer">
+                  <a href="#" class="post-read-link" aria-label="Read: Power Apps Tutorial">Read Tutorial →</a>
+                  <span class="diff-badge diff--beginner">Beginner</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 4 -->
+            <article class="post-card reveal rd4" data-category="network" role="listitem">
+              <div class="post-thumb">
+                <div class="post-thumb-bg thumb--4"></div>
+                <div class="thumb-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="12" x2="19" y2="16"/><line x1="12" y1="12" x2="5" y2="16"/></svg>
+                </div>
+              </div>
+              <div class="post-body">
+                <span class="post-badge badge--network">Networking</span>
+                <div class="post-meta">
+                  <time datetime="2025-05-20">20 May 2025</time>
+                  <span class="post-meta-dot"></span>
+                  <span>6 min</span>
+                </div>
+                <h3>Setting Up VLANs for a Small Office: A Step-by-Step Guide</h3>
+                <p>Segment your guest Wi-Fi, CCTV, and work machines on separate VLANs using a managed switch — improve security without expensive hardware.</p>
+                <div class="post-footer">
+                  <a href="#" class="post-read-link" aria-label="Read: VLAN Setup Guide">Read Guide →</a>
+                  <span class="diff-badge diff--intermediate">Intermediate</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 5 -->
+            <article class="post-card reveal rd5" data-category="web" role="listitem">
+              <div class="post-thumb">
+                <div class="post-thumb-bg thumb--1"></div>
+                <div class="thumb-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </div>
+              </div>
+              <div class="post-body">
+                <span class="post-badge badge--web">Web Dev</span>
+                <div class="post-meta">
+                  <time datetime="2025-05-14">14 May 2025</time>
+                  <span class="post-meta-dot"></span>
+                  <span>9 min</span>
+                </div>
+                <h3>Core Web Vitals in 2025: What Still Matters and How to Pass</h3>
+                <p>LCP, INP, and CLS — what each metric means for your rankings, and the 8 practical fixes that move the needle most on real Sri Lankan hosting.</p>
+                <div class="post-footer">
+                  <a href="#" class="post-read-link" aria-label="Read: Core Web Vitals Guide">Read Guide →</a>
+                  <span class="diff-badge diff--intermediate">Intermediate</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 6 -->
+            <article class="post-card reveal rd6" data-category="security" role="listitem">
+              <div class="post-thumb">
+                <div class="post-thumb-bg thumb--6"></div>
+                <div class="thumb-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+              </div>
+              <div class="post-body">
+                <span class="post-badge badge--security">Security</span>
+                <div class="post-meta">
+                  <time datetime="2025-05-07">7 May 2025</time>
+                  <span class="post-meta-dot"></span>
+                  <span>5 min</span>
+                </div>
+                <h3>Phishing in 2025: How to Train Staff to Spot AI-Generated Scam Emails</h3>
+                <p>Modern phishing emails are grammatically perfect. We break down the new red flags — header anomalies, urgency patterns, and sender spoofing — your team must know.</p>
+                <div class="post-footer">
+                  <a href="#" class="post-read-link" aria-label="Read: Phishing Awareness Guide">Read Guide →</a>
+                  <span class="diff-badge diff--beginner">Beginner</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 7 -->
+            <article class="post-card reveal rd7" data-category="hardware" role="listitem">
+              <div class="post-thumb">
+                <div class="post-thumb-bg thumb--7"></div>
+                <div class="thumb-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+              </div>
+              <div class="post-body">
+                <span class="post-badge badge--hardware">Hardware</span>
+                <div class="post-meta">
+                  <time datetime="2025-04-29">29 Apr 2025</time>
+                  <span class="post-meta-dot"></span>
+                  <span>6 min</span>
+                </div>
+                <h3>RAM Upgrade Guide: How Much Do You Actually Need in 2025?</h3>
+                <p>DDR5 vs DDR4, dual-channel benefits, and the real-world performance gains for office, creative, and developer workloads — with benchmarks.</p>
+                <div class="post-footer">
+                  <a href="#" class="post-read-link" aria-label="Read: RAM Upgrade Guide">Read Guide →</a>
+                  <span class="diff-badge diff--beginner">Beginner</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 8 -->
+            <article class="post-card reveal rd8" data-category="software" role="listitem">
+              <div class="post-thumb">
+                <div class="post-thumb-bg thumb--8"></div>
+                <div class="thumb-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                </div>
+              </div>
+              <div class="post-body">
+                <span class="post-badge badge--software">Software</span>
+                <div class="post-meta">
+                  <time datetime="2025-04-21">21 Apr 2025</time>
+                  <span class="post-meta-dot"></span>
+                  <span>4 min</span>
+                </div>
+                <h3>Windows 11 Performance Tweaks That Actually Work</h3>
+                <p>Disable Bing in Start, tame SysMain, fix stuttering with GPU scheduling — 10 registry and settings changes tested on real hardware.</p>
+                <div class="post-footer">
+                  <a href="#" class="post-read-link" aria-label="Read: Windows 11 Tweaks">Read Guide →</a>
+                  <span class="diff-badge diff--intermediate">Intermediate</span>
+                </div>
+              </div>
+            </article>
+
+          </div><!-- /posts-grid -->
+
+          <!-- No results message -->
+          <div id="noResults" style="display:none; text-align:center; padding:3rem 0; color:var(--text-muted); font-size:0.95rem;">
+            No posts found for that filter. Try another category.
+          </div>
+
+          <!-- PAGINATION -->
+          <nav class="pagination" aria-label="Blog pagination">
+            <button class="page-btn page-btn--nav" aria-label="Previous page">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+              Prev
+            </button>
+            <button class="page-btn active" aria-current="page" aria-label="Page 1">1</button>
+            <button class="page-btn" aria-label="Page 2">2</button>
+            <button class="page-btn" aria-label="Page 3">3</button>
+            <span style="color:var(--text-muted);font-size:0.9rem;padding:0 0.25rem">…</span>
+            <button class="page-btn" aria-label="Page 8">8</button>
+            <button class="page-btn page-btn--nav" aria-label="Next page">
+              Next
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </nav>
+
+        </div><!-- /posts-column -->
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="sidebar" aria-label="Blog sidebar">
+
+          <!-- Newsletter -->
+          <div class="sidebar-widget newsletter-widget">
+            <h3 class="widget-title">📬 Weekly Digest</h3>
+            <p>Get the best tech guides delivered to your inbox every Tuesday. No spam, unsubscribe anytime.</p>
+            <div class="newsletter-form" role="form" aria-label="Newsletter signup">
+              <input type="email" class="nl-input" placeholder="your@email.com" aria-label="Email address"/>
+              <button class="nl-btn" type="button">Subscribe Free</button>
+            </div>
+          </div>
+
+          <!-- Popular Posts -->
+          <div class="sidebar-widget">
+            <h3 class="widget-title">🔥 Most Read</h3>
+            <ol class="popular-list" role="list">
+              <li class="popular-item">
+                <span class="popular-num" aria-hidden="true">01</span>
+                <div class="popular-info">
+                  <h4>Complete Laptop Repair Checklist</h4>
+                  <span>12,400 reads · Hardware</span>
+                </div>
+              </li>
+              <li class="popular-item">
+                <span class="popular-num" aria-hidden="true">02</span>
+                <div class="popular-info">
+                  <h4>Remove Stubborn Malware Without Reinstalling</h4>
+                  <span>9,870 reads · Software</span>
+                </div>
+              </li>
+              <li class="popular-item">
+                <span class="popular-num" aria-hidden="true">03</span>
+                <div class="popular-info">
+                  <h4>Power Apps Leave-Request Tutorial</h4>
+                  <span>7,210 reads · Power Apps</span>
+                </div>
+              </li>
+              <li class="popular-item">
+                <span class="popular-num" aria-hidden="true">04</span>
+                <div class="popular-info">
+                  <h4>VLAN Setup for Small Offices</h4>
+                  <span>5,990 reads · Networking</span>
+                </div>
+              </li>
+              <li class="popular-item">
+                <span class="popular-num" aria-hidden="true">05</span>
+                <div class="popular-info">
+                  <h4>Core Web Vitals in 2025</h4>
+                  <span>4,810 reads · Web Dev</span>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <!-- Topics / Tags -->
+          <div class="sidebar-widget">
+            <h3 class="widget-title">🏷 Topics</h3>
+            <div class="tags-cloud" role="list">
+              <span class="tag-pill" role="listitem">Windows 11</span>
+              <span class="tag-pill" role="listitem">Android</span>
+              <span class="tag-pill" role="listitem">SSD</span>
+              <span class="tag-pill" role="listitem">Power Automate</span>
+              <span class="tag-pill" role="listitem">Networking</span>
+              <span class="tag-pill" role="listitem">iPhone Repair</span>
+              <span class="tag-pill" role="listitem">Backup</span>
+              <span class="tag-pill" role="listitem">Cybersecurity</span>
+              <span class="tag-pill" role="listitem">React</span>
+              <span class="tag-pill" role="listitem">SharePoint</span>
+              <span class="tag-pill" role="listitem">Wi-Fi</span>
+              <span class="tag-pill" role="listitem">Node.js</span>
+              <span class="tag-pill" role="listitem">ERP</span>
+              <span class="tag-pill" role="listitem">Linux</span>
+            </div>
+          </div>
+
+          <!-- Authors -->
+          <div class="sidebar-widget">
+            <h3 class="widget-title">✍ Authors</h3>
+            <ul class="authors-list" role="list">
+              <li class="author-item">
+                <div class="author-avatar av--1" aria-hidden="true">BA</div>
+                <div class="author-info">
+                  <strong>Buddika A. SIlva</strong>
+                  <span>Systems Engineer</span>
+                </div>
+                <span class="author-count">2 posts</span>
+              </li>
+              <li class="author-item">
+                <div class="author-avatar av--2" aria-hidden="true">NP</div>
+                <div class="author-info">
+                  <strong>Nimasha Perera</strong>
+                  <span>Full-Stack Developer</span>
+                </div>
+                <span class="author-count">18 posts</span>
+              </li>
+              <li class="author-item">
+                <div class="author-avatar av--3" aria-hidden="true">DS</div>
+                <div class="author-info">
+                  <strong>Dinesh Silva</strong>
+                  <span>Network Specialist</span>
+                </div>
+                <span class="author-count">11 posts</span>
+              </li>
+            </ul>
+          </div>
+
+        </aside>
+
+      </div><!-- /blog-layout -->
+    </div>
+
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer" role="contentinfo">
+    <!--<div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo footer-logo" aria-label="TechCore Home">
+            <span class="logo-mark">TC</span>
+            <span class="logo-text">TechCore</span>
+          </a>
+          <p class="footer-tagline">Empowering businesses and individuals with reliable, expert technology solutions.</p>
+          <div class="social-links" aria-label="Social media links">
+            <a href="#" class="social-link" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            <a href="#" class="social-link" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+            <a href="#" class="social-link" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+            <a href="#" class="social-link" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          </div>
+        </div>-->
+        <!--<nav class="footer-nav" aria-label="Quick links">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul role="list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#services">Services</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </nav>-->
+        <!--<nav class="footer-nav" aria-label="Blog categories">
+          <h4 class="footer-heading">Categories</h4>
+          <ul role="list">
+            <li><a href="#">Hardware Guides</a></li>
+            <li><a href="#">Software Tutorials</a></li>
+            <li><a href="#">Mobile Repairs</a></li>
+            <li><a href="#">Networking</a></li>
+            <li><a href="#">Web Development</a></li>
+            <li><a href="#">Power Apps</a></li>
+          </ul>
+        </nav>-->
+        <!--<address class="footer-contact" aria-label="Contact information">
+          <h4 class="footer-heading">Get In Touch</h4>
+          <ul role="list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.6 19.79 19.79 0 0 1 1.59 5 2 2 0 0 1 3.56 3h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.9a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 18.18v-1.26z"/></svg><span>+94 11 234 5678</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>hello@techcore.lk</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>123 Tech Street, Colombo 03</span></li>
+          </ul>
+        </address>-->
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <span id="year"></span> </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ── Mobile menu ──────────────────────────────────────────
+    const toggle   = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    toggle.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      toggle.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      navLinks.classList.remove('open'); toggle.classList.remove('open');
+      toggle.setAttribute('aria-expanded','false'); document.body.style.overflow = '';
+    }));
+
+    // ── Sticky nav shadow ────────────────────────────────────
+    const header = document.querySelector('.nav-header');
+    window.addEventListener('scroll', () => {
+      header.style.boxShadow = window.scrollY > 20 ? '0 4px 24px rgba(0,0,0,0.5)' : 'none';
+    }, { passive: true });
+
+    // ════════════════════════════════════════════════════════
+    // PORTAL INTEGRATION
+    // Inject posts BEFORE the filter system initialises so
+    // all cards (static + portal) exist in the DOM together.
+    // ════════════════════════════════════════════════════════
+    // Fetch posts and users from GitHub (public raw URL, no auth needed)
+    (async function injectPortalPosts() {
+      var GH_RAW = 'https://raw.githubusercontent.com/Buddika-A-Silva/Arctic-Tech-Guide/main/';
+
+      var portalPosts = [], users = [];
+      try {
+        var r1 = await fetch(GH_RAW + 'posts.json?t=' + Date.now());
+        if(r1.ok) portalPosts = await r1.json();
+      } catch(e) {}
+      try {
+        var r2 = await fetch(GH_RAW + 'users.json?t=' + Date.now());
+        if(r2.ok) users = await r2.json();
+      } catch(e) {}
+
+      var published = portalPosts.filter(function(p){ return p.published; });
+      if(!published.length) return;
+
+      var grid    = document.getElementById('postsGrid');
+      var featSlot= document.querySelector('.featured-post');
+
+      function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+      function cap(s){ return s ? s[0].toUpperCase()+s.slice(1) : ''; }
+
+      var thumbMap={'Cloud Technology':'thumb--1','software':'thumb--2','mobile':'thumb--3','network':'thumb--4','web':'thumb--1','power':'thumb--5','security':'thumb--6','hardware':'thumb--7'};
+      var iconMap={
+        'Cloud Technology':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>',
+        'software':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+        'mobile':  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+        'network': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="12" x2="19" y2="16"/><line x1="12" y1="12" x2="5" y2="16"/></svg>',
+        'web':     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+        'power':   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+        'security':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+        'hardware':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'
+      };
+      var badgeMap={'Cloud Technology':'badge--featured','software':'badge--software','mobile':'badge--mobile','network':'badge--network','web':'badge--web','power':'badge--power','security':'badge--security','hardware':'badge--hardware'};
+      var catLabel={'Cloud Technology':'Cloud Technology','software':'Software','mobile':'Mobile','network':'Networking','web':'Web Dev','power':'Power Apps','security':'Security','hardware':'Hardware'};
+      var grads=['linear-gradient(135deg,#00d9ff,#0fa8ff)','linear-gradient(135deg,#7c3aed,#ec4899)','linear-gradient(135deg,#059669,#06b6d4)','linear-gradient(135deg,#f59e0b,#ef4444)','linear-gradient(135deg,#6366f1,#8b5cf6)'];
+
+      function authorBlock(authorId){
+        var u=users.find(function(x){return x.id===authorId;}); if(!u)return '';
+        var initials=u.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+        var grad=u.grad||grads[users.indexOf(u)%grads.length];
+        return '<div style="display:flex;align-items:center;gap:.5rem;margin-top:.65rem;padding-top:.65rem;border-top:1px solid rgba(255,255,255,.06)">'
+          +'<div style="width:24px;height:24px;border-radius:50%;background:'+grad+';display:grid;place-items:center;font-size:.6rem;font-weight:800;color:#fff;flex-shrink:0">'+initials+'</div>'
+          +'<span style="font-size:.75rem;color:var(--text-muted)">'+esc(u.name)+'</span>'
+          +'<span style="font-size:.7rem;color:var(--text-muted);opacity:.6"> - '+esc(u.role||'')+'</span></div>';
+      }
+
+      function buildCard(p, rdClass){
+        var article=document.createElement('article');
+        article.className='post-card reveal '+rdClass;
+        article.dataset.category=p.category||'';
+        article.setAttribute('role','listitem');
+        var tags=(p.tags||[]).length
+          ?'<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem">'+p.tags.map(function(t){return '<span class="tag-pill">'+esc(t)+'</span>';}).join('')+'</div>':'';
+        var thumbHtml;
+        if(p.image){
+          thumbHtml='<div class="post-thumb"><img class="post-thumb-img" src="'+p.image+'" alt="'+esc(p.title)+'" loading="lazy"/></div>';
+        } else {
+          thumbHtml='<div class="post-thumb"><div class="post-thumb-bg '+(thumbMap[p.category]||'thumb--2')+'"></div><div class="thumb-icon" aria-hidden="true">'+(iconMap[p.category]||iconMap.software)+'</div></div>';
+        }
+        article.innerHTML=thumbHtml
+          +'<div class="post-body">'
+            +'<span class="post-badge '+(badgeMap[p.category]||'badge--software')+'">'+esc(catLabel[p.category]||p.category||'Post')+'</span>'
+            +'<div class="post-meta"><time>'+esc(p.date||'')+'</time><span class="post-meta-dot"></span><span>'+(p.readTime||5)+' min</span></div>'
+            +'<h3>'+esc(p.title)+'</h3>'
+            +'<p>'+esc(p.excerpt)+'</p>'
+            +'<div class="post-footer"><a href="'+esc(p.url||'#')+'" class="post-read-link">Read Guide &rarr;</a>'
+            +'<span class="diff-badge diff--'+(p.difficulty||'intermediate')+'">'+cap(p.difficulty||'intermediate')+'</span></div>'
+            +tags+authorBlock(p.authorId)
+          +'</div>';
+        return article;
+      }
+
+      // Featured post
+      var featuredPost=published.find(function(p){return p.featured;});
+      var regularPosts=published.filter(function(p){return !p.featured;});
+
+      if(featuredPost&&featSlot){
+        var featImgPane=featSlot.querySelector('.featured-img');
+        if(featImgPane&&featuredPost.image){
+          featImgPane.style.backgroundImage='url('+featuredPost.image+')';
+          featImgPane.style.backgroundSize='cover';
+          featImgPane.style.backgroundPosition='center';
+          var deco=featImgPane.querySelector('.featured-img-deco');
+          if(deco)deco.style.display='none';
+        }
+        var fu=users.find(function(x){return x.id===featuredPost.authorId;});
+        var authorLine=fu?'<span style="font-size:.8rem;color:var(--text-muted);margin-left:.5rem">by '+esc(fu.name)+'</span>':'';
+        featSlot.dataset.category=featuredPost.category||'';
+        featSlot.querySelector('.featured-body').innerHTML=
+          '<span class="post-badge badge--featured">&#11088; Featured</span>'
+          +'<div class="post-meta"><time>'+esc(featuredPost.date||'')+'</time><span class="post-meta-dot"></span><span>'+(featuredPost.readTime||5)+' min read</span><span class="post-meta-dot"></span>'
+          +'<span class="diff-badge diff--'+(featuredPost.difficulty||'intermediate')+'">'+cap(featuredPost.difficulty||'intermediate')+'</span>'+authorLine+'</div>'
+          +'<h2>'+esc(featuredPost.title)+'</h2>'
+          +'<p>'+esc(featuredPost.excerpt)+'</p>'
+          +'<a href="'+esc(featuredPost.url||'#')+'" class="read-link">Read Full Guide '
+          +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>';
+      }
+
+      // Append regular cards BEFORE filter system runs
+      var rdCls=['rd1','rd2','rd3','rd4','rd5','rd6','rd7','rd8'];
+      regularPosts.forEach(function(p,i){ grid.appendChild(buildCard(p,rdCls[i%8])); });
+
+      // Authors sidebar widget
+      if(users.length){
+        var widget=document.querySelector('.authors-list');
+        if(widget){
+          widget.innerHTML=users.map(function(u,i){
+            var initials=u.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+            var postCount=published.filter(function(p){return p.authorId===u.id;}).length;
+            var grad=u.grad||grads[i%grads.length];
+            return '<li class="author-item">'
+              +'<div class="author-avatar" style="background:'+grad+';color:#fff">'+initials+'</div>'
+              +'<div class="author-info"><strong>'+esc(u.name)+'</strong><span>'+esc(u.role||'')+'</span></div>'
+              +'<span class="author-count">'+postCount+' post'+(postCount!==1?'s':'')+'</span>'
+              +'</li>';
+          }).join('');
+        }
+      }
+
+      // Re-run filters now that all portal cards are in DOM
+      if(typeof applyFilters === 'function') applyFilters();
+    })();
+
+    // ── Filter / search / pagination ─────────────────────────
+    // All cards (static + portal) are now in the DOM
+    const filterBtns  = document.querySelectorAll('.filter-btn');
+    const featPost    = document.querySelector('.featured-post');
+    const noResults   = document.getElementById('noResults');
+    const pagination  = document.querySelector('.pagination');
+    const searchInput = document.getElementById('searchInput');
+    const PAGE_SIZE   = 4;
+    const state = { category: 'all', query: '', tag: '', page: 1 };
+
+    function getAllCards() {
+      return Array.from(document.querySelectorAll('#postsGrid .post-card'));
+    }
+
+    function applyFilters() {
+      const q        = state.query.toLowerCase().trim();
+      const t        = state.tag.toLowerCase().trim();
+      const category = state.category;
+      const allCards = getAllCards();
+
+      const filtered = allCards.filter(card => {
+        const text = card.textContent.toLowerCase();
+        return (category === 'all' || card.dataset.category === category)
+            && (!q || text.includes(q))
+            && (!t || text.includes(t));
+      });
+
+      // Featured post visibility — uses its own data-category
+      if (featPost) {
+        const fc = featPost.dataset.category || 'hardware';
+        const ft = featPost.textContent.toLowerCase();
+        featPost.style.display =
+          (category === 'all' || category === fc)
+          && (!q || ft.includes(q))
+          && (!t || ft.includes(t)) ? '' : 'none';
+      }
+
+      const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+      if (state.page > totalPages) state.page = totalPages;
+      const start = (state.page - 1) * PAGE_SIZE;
+      const end   = state.page * PAGE_SIZE;
+
+      allCards.forEach(card => {
+        const idx = filtered.indexOf(card);
+        card.style.display = (idx >= start && idx < end) ? '' : 'none';
+      });
+
+      noResults.style.display = filtered.length === 0 ? 'block' : 'none';
+
+      // Rebuild pagination dynamically
+      pagination.innerHTML = '';
+      if (totalPages <= 1) { pagination.style.display = 'none'; return; }
+      pagination.style.display = 'flex';
+      const mkBtn = (label, pg, active, extraCls) => {
+        const b = document.createElement('button');
+        b.className = ('page-btn ' + (extraCls||'')).trim();
+        b.textContent = label;
+        if (active) { b.classList.add('active'); b.setAttribute('aria-current','page'); }
+        b.addEventListener('click', () => { state.page = pg; applyFilters(); window.scrollTo({top:0,behavior:'smooth'}); });
+        return b;
+      };
+      pagination.appendChild(mkBtn('Prev', Math.max(1, state.page-1), false, 'page-btn--nav'));
+      for (let i = 1; i <= totalPages; i++) pagination.appendChild(mkBtn(String(i), i, i===state.page));
+      pagination.appendChild(mkBtn('Next', Math.min(totalPages, state.page+1), false, 'page-btn--nav'));
+    }
+
+    filterBtns.forEach(btn => btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.category = btn.dataset.filter;
+      state.query = ''; state.tag = ''; state.page = 1;
+      searchInput.value = '';
+      applyFilters();
+    }));
+
+    searchInput.addEventListener('input', () => {
+      state.query = searchInput.value;
+      state.category = 'all'; state.tag = ''; state.page = 1;
+      filterBtns.forEach(b => b.classList.remove('active'));
+      document.querySelector('[data-filter="all"]').classList.add('active');
+      applyFilters();
+    });
+
+    document.querySelectorAll('.tag-pill').forEach(tag => tag.addEventListener('click', () => {
+      state.tag = tag.textContent.trim();
+      state.category = 'all'; state.query = ''; state.page = 1;
+      searchInput.value = '';
+      filterBtns.forEach(b => b.classList.remove('active'));
+      document.querySelector('[data-filter="all"]').classList.add('active');
+      document.querySelectorAll('.tag-pill').forEach(t => t.classList.remove('active'));
+      tag.classList.add('active');
+      applyFilters();
+    }));
+
+    applyFilters();
+
+    // ── Newsletter ────────────────────────────────────────────
+    const newsletterForm = document.querySelector('.newsletter-form');
+    const newsletterMsg  = document.createElement('p');
+    newsletterMsg.style.marginTop = '0.75rem';
+    newsletterForm.appendChild(newsletterMsg);
+    document.querySelector('.nl-btn').addEventListener('click', () => {
+      const input = newsletterForm.querySelector('input');
+      const email = input.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        newsletterMsg.textContent = 'Please enter a valid email address.';
+        newsletterMsg.style.color = '#ff9fa3'; return;
+      }
+      newsletterMsg.textContent = '\u2714 Subscription confirmed for ' + email + '.';
+      newsletterMsg.style.color = '#88ffd8';
+      input.value = '';
+    });
+
+    // ── Scroll-reveal ────────────────────────────────────────
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    } else {
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    }
+  </script>
+</body>
+</html>
