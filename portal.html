@@ -869,17 +869,29 @@ const SESSION_KEY = 'Arctic Tech Guide_session';
 const GH_TOKEN = '__GH_TOKEN__';
 
 /* ── GitHub file helpers ── */
-async function ghGet(path){
+/* ── GitHub file helpers ── */
+async function ghGetRaw(path){
+  // Fetches raw GitHub API response (includes sha field)
   const r = await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path+'?ref='+GH_BRANCH,{
     headers: {Authorization:'token '+GH_TOKEN}
   });
   if(!r.ok) throw new Error('GET '+path+' failed: '+r.status);
-  const j = await r.json();
+  return await r.json();
+}
+
+async function ghGet(path){
+  const j = await ghGetRaw(path);
   return { content: JSON.parse(atob(j.content.replace(/\n/g,''))), sha: j.sha };
 }
 
 async function ghPut(path, content, sha){
-  const body = { message:'portal: update '+path, content: btoa(JSON.stringify(content,null,2)), branch: GH_BRANCH };
+  // Always fetch current SHA if we don't have one — prevents 422 on existing files
+  if(!sha){
+    try{ const j = await ghGetRaw(path); sha = j.sha; }catch(e){}
+  }
+  // Use unescape+encodeURIComponent so btoa handles unicode correctly
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2))));
+  const body = { message:'portal: update '+path, content: encoded, branch: GH_BRANCH };
   if(sha) body.sha = sha;
   const r = await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path,{
     method:'PUT', headers:{ Authorization:'token '+GH_TOKEN, 'Content-Type':'application/json' },
@@ -894,18 +906,18 @@ let _postsSha = null, _usersSha = null;
 
 async function loadPosts(){
   try{ const d=await ghGet('posts.json'); _postsSha=d.sha; return d.content||[]; }
-  catch{ return []; }
+  catch(e){ console.warn('loadPosts failed:',e); return []; }
 }
 async function savePosts(arr){
-  const r=await ghPut('posts.json', arr, _postsSha);
+  const r = await ghPut('posts.json', arr, _postsSha);
   _postsSha = r.content.sha;
 }
 async function loadUsers(){
   try{ const d=await ghGet('users.json'); _usersSha=d.sha; return d.content||[]; }
-  catch{ return []; }
+  catch(e){ console.warn('loadUsers failed:',e); return []; }
 }
 async function saveUsers(arr){
-  const r=await ghPut('users.json', arr, _usersSha);
+  const r = await ghPut('users.json', arr, _usersSha);
   _usersSha = r.content.sha;
 }
 
