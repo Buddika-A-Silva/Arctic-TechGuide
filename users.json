@@ -1,10 +1,10 @@
 [
   {
-    "id": "user_1774197347407",
-    "name": "Dilan Ranasinghe",
-    "username": "dilan",
-    "role": "System Admin",
-    "email": "Dilanr@zillione.com",
+    "id": "user_1774198018159",
+    "name": "Buddika Ashan",
+    "username": "ashan",
+    "role": "System Engineer",
+    "email": "buddikaashansilva@hotmail.com",
     "colorIdx": 0,
     "grad": "linear-gradient(135deg,#00d9ff,#0fa8ff)",
     "passwordHash": "102ea858"
