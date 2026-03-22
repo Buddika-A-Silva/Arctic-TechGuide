@@ -16,10 +16,25 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Remove data files before deploy (never overwrite live data)
+      - name: Restore live data files from GitHub API
+        env:
+          GH_TOKEN: ${{ secrets.GH_API_TOKEN }}
         run: |
-          rm -f posts.json users.json
-          echo "Data files excluded from deployment"
+          # Fetch the LIVE posts.json from GitHub API (what portal saved)
+          curl -s -H "Authorization: token $GH_TOKEN" \
+            "https://api.github.com/repos/Buddika-A-Silva/Arctic-Tech-Guide/contents/posts.json?ref=main" \
+            | python3 -c "import sys,json,base64; d=json.load(sys.stdin); open('posts.json','w').write(base64.b64decode(d['content']).decode())" \
+            || echo "[]" > posts.json
+
+          # Fetch the LIVE users.json from GitHub API (what portal saved)
+          curl -s -H "Authorization: token $GH_TOKEN" \
+            "https://api.github.com/repos/Buddika-A-Silva/Arctic-Tech-Guide/contents/users.json?ref=main" \
+            | python3 -c "import sys,json,base64; d=json.load(sys.stdin); open('users.json','w').write(base64.b64decode(d['content']).decode())" \
+            || echo "[]" > users.json
+
+          echo "Live data restored:"
+          echo "posts.json: $(cat posts.json | python3 -c 'import sys,json; d=json.load(sys.stdin); print(len(d), "posts")')"
+          echo "users.json: $(cat users.json | python3 -c 'import sys,json; d=json.load(sys.stdin); print(len(d), "users")')"
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
