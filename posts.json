@@ -1,19 +1,19 @@
 [
   {
-    "id": "post_1774187822668",
-    "title": "Test v1.0.1",
-    "excerpt": "Test v1.0.1",
-    "url": "Test v1.0.1",
-    "content": "Test v1.0.1",
+    "id": "post_1774189036842",
+    "title": "Learn it. Test it. Build it.",
+    "excerpt": "Learn it. Test it. Build it.",
+    "url": "Learn it. Test it. Build it.",
+    "content": "Learn it. Test it. Build it.",
     "category": "web",
     "difficulty": "intermediate",
     "readTime": 5,
     "date": "22 Mar 2026",
     "featured": false,
     "published": true,
-    "authorId": "user_1774187668206",
+    "authorId": "user_1774188970322",
     "tags": [],
     "image": "",
-    "createdAt": 1774187822668
+    "createdAt": 1774189036842
   }
 ]
