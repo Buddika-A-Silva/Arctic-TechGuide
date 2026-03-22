@@ -1137,19 +1137,23 @@
     // Inject posts BEFORE the filter system initialises so
     // all cards (static + portal) exist in the DOM together.
     // ════════════════════════════════════════════════════════
-    // Fetch posts and users from GitHub (public raw URL, no auth needed)
+    // Fetch posts and users from GitHub API (works for private repos)
     (async function injectPortalPosts() {
-      var GH_RAW = 'https://raw.githubusercontent.com/Buddika-A-Silva/Arctic-Tech-Guide/main/';
+      var GH_API_BASE = 'https://api.github.com/repos/Buddika-A-Silva/Arctic-Tech-Guide/contents/';
+      var GH_TOKEN    = 'REPLACE_TOKEN_HERE';
+
+      async function ghFetch(file){
+        var r = await fetch(GH_API_BASE + file + '?ref=main', {
+          headers: { Authorization: 'token ' + GH_TOKEN }
+        });
+        if(!r.ok) throw new Error(file + ' fetch failed: ' + r.status);
+        var j = await r.json();
+        return JSON.parse(atob(j.content.replace(/\n/g,'')));
+      }
 
       var portalPosts = [], users = [];
-      try {
-        var r1 = await fetch(GH_RAW + 'posts.json?t=' + Date.now());
-        if(r1.ok) portalPosts = await r1.json();
-      } catch(e) {}
-      try {
-        var r2 = await fetch(GH_RAW + 'users.json?t=' + Date.now());
-        if(r2.ok) users = await r2.json();
-      } catch(e) {}
+      try { portalPosts = await ghFetch('posts.json'); } catch(e) { console.warn('posts:', e); }
+      try { users       = await ghFetch('users.json'); } catch(e) { console.warn('users:', e); }
 
       var published = portalPosts.filter(function(p){ return p.published; });
       if(!published.length) return;

@@ -865,7 +865,8 @@ const GH_BRANCH = 'main';
 const GH_API    = 'https://api.github.com';
 
 const SESSION_KEY = 'Arctic Tech Guide_session';
-const GH_TOKEN = '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';
+// Token is injected at deploy time by GitHub Actions — never exposed in source
+const GH_TOKEN = 'REPLACE_TOKEN_HERE';
 
 /* ── GitHub file helpers ── */
 async function ghGetRaw(path){
@@ -882,11 +883,9 @@ async function ghGet(path){
 }
 
 async function ghPut(path, content, sha){
-  // Always fetch current SHA if missing — prevents 422 on existing files
   if(!sha){
     try{ const j=await ghGetRaw(path); sha=j.sha; }catch(e){}
   }
-  // unescape+encodeURIComponent makes btoa safe for unicode characters
   const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(content,null,2))));
   const body = { message:'portal: update '+path, content:encoded, branch:GH_BRANCH };
   if(sha) body.sha = sha;
@@ -903,19 +902,19 @@ let _postsSha = null, _usersSha = null;
 
 async function loadPosts(){
   try{ const d=await ghGet('posts.json'); _postsSha=d.sha; return d.content||[]; }
-  catch(e){ console.warn('loadPosts:',e); return []; }
+  catch{ return []; }
 }
 async function savePosts(arr){
   const r=await ghPut('posts.json', arr, _postsSha);
-  _postsSha=r.content.sha;
+  _postsSha = r.content.sha;
 }
 async function loadUsers(){
   try{ const d=await ghGet('users.json'); _usersSha=d.sha; return d.content||[]; }
-  catch(e){ console.warn('loadUsers:',e); return []; }
+  catch{ return []; }
 }
 async function saveUsers(arr){
   const r=await ghPut('users.json', arr, _usersSha);
-  _usersSha=r.content.sha;
+  _usersSha = r.content.sha;
 }
 
 let posts = [];

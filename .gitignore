@@ -1,1 +1,5 @@
+# These files are managed live by the portal via GitHub API
+# They must NOT be committed or they will be overwritten on every deploy
+posts.json
+users.json
 config.js
