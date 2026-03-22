@@ -1153,9 +1153,31 @@
       }
 
       var portalPosts = [], users = [];
-      try { portalPosts = await ghFetch('posts.json'); } catch(e) { console.warn('posts:', e); }
-      try { users       = await ghFetch('users.json'); } catch(e) { console.warn('users:', e); }
 
+      async function fetchJsonPath(path){
+        try {
+          var r = await fetch(path+'?t='+Date.now());
+          if(!r.ok) throw new Error('local fetch failed: '+r.status);
+          return await r.json();
+        } catch(err){
+          console.warn('local', path, err);
+          throw err;
+        }
+      }
+
+      async function loadData(){
+        try {
+          portalPosts = await fetchJsonPath('/posts.json');
+          users = await fetchJsonPath('/users.json');
+          return;
+        } catch(_) {
+          // fallback to GitHub API for private repo mode
+        }
+        try { portalPosts = await ghFetch('posts.json'); } catch(e) { console.warn('github posts:', e); }
+        try { users       = await ghFetch('users.json'); } catch(e) { console.warn('github users:', e); }
+      }
+
+      await loadData();
       var published = portalPosts.filter(function(p){ return p.published; });
       if(!published.length) return;
 
