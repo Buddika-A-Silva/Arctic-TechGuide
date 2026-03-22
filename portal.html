@@ -910,16 +910,36 @@ async function loadPosts(){
   catch{ return []; }
 }
 async function savePosts(arr){
-  const r=await ghPut('posts.json', arr, _postsSha);
-  _postsSha = r.content.sha;
+  try{
+    const r=await ghPut('posts.json', arr, null);
+    _postsSha = r.content.sha;
+  } catch(err) {
+    if(err.message.includes('422')) {
+      await loadPosts();
+      const r=await ghPut('posts.json', arr, _postsSha);
+      _postsSha = r.content.sha;
+    } else {
+      throw err;
+    }
+  }
 }
 async function loadUsers(){
   try{ const d=await ghGet('users.json'); _usersSha=d.sha; return d.content||[]; }
   catch{ return []; }
 }
 async function saveUsers(arr){
-  const r=await ghPut('users.json', arr, _usersSha);
-  _usersSha = r.content.sha;
+  try{
+    const r=await ghPut('users.json', arr, null);
+    _usersSha = r.content.sha;
+  } catch(err) {
+    if(err.message.includes('422')) {
+      await loadUsers();
+      const r=await ghPut('users.json', arr, _usersSha);
+      _usersSha = r.content.sha;
+    } else {
+      throw err;
+    }
+  }
 }
 
 let posts = [];
