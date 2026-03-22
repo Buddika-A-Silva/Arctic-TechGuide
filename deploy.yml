@@ -1,0 +1,63 @@
+name: Deploy to Azure Static Web Apps
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [ opened, synchronize, reopened, closed ]
+    branches: [ main ]
+
+jobs:
+  build_and_deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Fetch live data files from GitHub API
+        run: |
+          python3 - << 'EOF'
+          import urllib.request, json, base64, os
+
+          token = "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"
+          base  = "https://api.github.com/repos/Buddika-A-Silva/Arctic-Tech-Guide/contents"
+          headers = {"Authorization": "token " + token, "Accept": "application/vnd.github.v3+json"}
+
+          for fname in ["posts.json", "users.json"]:
+              try:
+                  req = urllib.request.Request(base + "/" + fname + "?ref=main", headers=headers)
+                  with urllib.request.urlopen(req) as r:
+                      data = json.loads(r.read())
+                  content = base64.b64decode(data["content"]).decode("utf-8")
+                  with open(fname, "w") as f:
+                      f.write(content)
+                  parsed = json.loads(content)
+                  print(f"{fname}: {len(parsed)} records")
+              except Exception as e:
+                  print(f"{fname}: error ({e}), using empty array")
+                  with open(fname, "w") as f:
+                      f.write("[]")
+          EOF
+
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: "/"
+          api_location: ""
+          output_location: "/"
+
+  close_pull_request:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request
+    steps:
+      - name: Close Pull Request
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: close
