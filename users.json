@@ -1,6 +1,10 @@
 [
   {
+<<<<<<< HEAD
     "id": "user_1774189727443",
+=======
+    "id": "user_1774190998859",
+>>>>>>> 81e07c641daf42d5043b1fc5724778d7d95048b4
     "name": "Buddika Ashan",
     "username": "ashan",
     "role": "System Engineer",
