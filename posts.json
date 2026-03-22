@@ -1,19 +1,19 @@
 [
   {
-    "id": "post_1774189759690",
+    "id": "post_1774197436773",
     "title": "Test Post v1.0.1",
     "excerpt": "Test Post v1.0.1",
     "url": "Test Post v1.0.1",
     "content": "Test Post v1.0.1",
     "category": "web",
-    "difficulty": "intermediate",
+    "difficulty": "advanced",
     "readTime": 5,
     "date": "22 Mar 2026",
     "featured": false,
     "published": true,
-    "authorId": "user_1774189727443",
+    "authorId": "user_1774197347407",
     "tags": [],
     "image": "",
-    "createdAt": 1774189759690
+    "createdAt": 1774197436773
   }
 ]
