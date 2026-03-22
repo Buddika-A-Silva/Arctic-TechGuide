@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "user_1774187668206",
+    "name": "Buddika",
+    "username": "ashan",
+    "role": "SE",
+    "email": "buddikaashansilva@hotmail.com",
+    "colorIdx": 0,
+    "grad": "linear-gradient(135deg,#00d9ff,#0fa8ff)",
+    "passwordHash": "d960e747"
+  }
+]
