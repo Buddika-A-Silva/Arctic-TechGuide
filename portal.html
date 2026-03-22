@@ -1303,6 +1303,7 @@ async function savePost(){
   showSpinner('Saving post to GitHub...');
   try{
     await savePosts(posts);
+    await new Promise(r => setTimeout(r, 1500));
     toast(id?'Post updated!':'Post published!','success');
     resetForm();
     switchPanel(document.querySelector('[data-panel=posts]'),'posts');
@@ -1482,6 +1483,7 @@ async function saveUser(){
   showSpinner('Saving author to GitHub...');
   try{
     await saveUsers(users);
+    await new Promise(r => setTimeout(r, 1500));
     closeUserModal();
     toast(editId?'Author updated!':'Author added!','success');
     renderUsersPanel();
@@ -1505,6 +1507,7 @@ async function deleteUser(id){
   try{
     await saveUsers(users);
     await savePosts(posts);
+    await new Promise(r => setTimeout(r, 1500));
     toast('Author removed.','success');
     renderUsersPanel();
     refreshDashboard();
@@ -1562,6 +1565,7 @@ async function confirmDelete(){
   showSpinner('Deleting post...');
   try{
     await savePosts(posts);
+    await new Promise(r => setTimeout(r, 1500));
     closeDeleteModal();
     toast('Post deleted.','success');
     renderPostsTable();
