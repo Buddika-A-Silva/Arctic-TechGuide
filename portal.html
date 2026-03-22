@@ -588,7 +588,7 @@
       <label>Password</label>
       <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" style="width:100%;box-sizing:border-box;-webkit-appearance:none;appearance:none;"/>
     </div>
-    <button class="btn btn-primary" style="width:100%;padding:.75rem;font-size:.92rem" onclick="doLogin()">Sign In</button>
+    <button class="btn btn-primary" style="width:100%;padding:.75rem;font-size:.92rem;text-align:center;justify-content:center" onclick="doLogin()">Sign In</button>
   </div>
 </div>
 
@@ -866,9 +866,7 @@ const GH_API    = 'https://api.github.com';
 
 const SESSION_KEY = 'Arctic Tech Guide_session';
 // Token is injected at deploy time by GitHub Actions — never exposed in source
-// Token loaded from config.js which is generated at deploy time by GitHub Actions
-// This variable is populated by the loadConfig() call below before anything else runs
-let GH_TOKEN = '';
+const GH_TOKEN = '__GH_TOKEN__';
 
 /* ── GitHub file helpers ── */
 async function ghGet(path){
@@ -914,27 +912,10 @@ async function saveUsers(arr){
 let posts = [];
 let users = [];
 
-/* ── Load config (token) then data ── */
-async function loadConfig(){
-  try{
-    const r = await fetch('config.js?t='+Date.now());
-    if(!r.ok) throw new Error('config.js not found');
-    const text = await r.text();
-    // config.js contains: window.PORTAL_TOKEN = 'ghp_xxx';
-    const match = text.match(/PORTAL_TOKEN\s*=\s*['"]([^'"]+)['"]/);
-    if(match) GH_TOKEN = match[1];
-    else throw new Error('PORTAL_TOKEN not found in config.js');
-  } catch(e){
-    console.error('Failed to load config:', e);
-    toast('Configuration error: '+e.message+'. Check deployment.','error');
-  }
-}
-
+/* ── Load all data on boot ── */
 async function initData(){
-  showSpinner('Loading...');
+  showSpinner('Loading data...');
   try{
-    await loadConfig();
-    if(!GH_TOKEN){ hideSpinner(); return; }
     [posts, users] = await Promise.all([loadPosts(), loadUsers()]);
   } catch(err){
     toast('Could not load data from GitHub: '+err.message,'error');
