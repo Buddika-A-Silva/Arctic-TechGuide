@@ -16,9 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Inject GitHub API token into portal.html
+      - name: Generate config.js with GitHub token
         run: |
-          sed -i "s|__GH_TOKEN__|${{ secrets.GH_API_TOKEN }}|g" portal.html
+          echo "window.PORTAL_TOKEN = '${{ secrets.GH_API_TOKEN }}';" > config.js
+          echo "config.js generated successfully"
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
