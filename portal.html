@@ -865,9 +865,9 @@ const GH_BRANCH = 'main';
 const GH_API    = 'https://api.github.com';
 
 const SESSION_KEY = 'Arctic Tech Guide_session';
-// NOTE: Do not store long-lived GitHub tokens in client-side code.
-// If portal is public, configure a secure proxy/API for read/write operations.
-const GH_TOKEN = null;
+// NOTE: Hard-coded token is required per user request, but this is unsafe for production.
+// Use a short-lived PAT or GitHub App in real deployments for security.
+const GH_TOKEN = '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';
 
 /* ── GitHub file helpers ── */
 async function ghGetRaw(path){
