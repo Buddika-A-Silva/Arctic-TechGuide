@@ -19,26 +19,26 @@ jobs:
       - name: Fetch live data files from GitHub API
         run: |
           python3 - << 'EOF'
-          import urllib.request, json, base64, os
+          import os, urllib.request, json, base64
 
-          token = "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"
-          base  = "https://api.github.com/repos/Buddika-A-Silva/Arctic-Tech-Guide/contents"
-          headers = {"Authorization": "token " + token, "Accept": "application/vnd.github.v3+json"}
+          token = os.environ.get('GITHUB_TOKEN')
+          if not token:
+              raise SystemExit('GITHUB_TOKEN is missing (set in GitHub Actions secrets)')
 
-          for fname in ["posts.json", "users.json"]:
-              try:
-                  req = urllib.request.Request(base + "/" + fname + "?ref=main", headers=headers)
-                  with urllib.request.urlopen(req) as r:
-                      data = json.loads(r.read())
-                  content = base64.b64decode(data["content"]).decode("utf-8")
-                  with open(fname, "w") as f:
-                      f.write(content)
-                  parsed = json.loads(content)
-                  print(f"{fname}: {len(parsed)} records")
-              except Exception as e:
-                  print(f"{fname}: error ({e}), using empty array")
-                  with open(fname, "w") as f:
-                      f.write("[]")
+          base = 'https://api.github.com/repos/Buddika-A-Silva/Arctic-Tech-Guide/contents'
+          headers = {'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json'}
+
+          for fname in ['posts.json', 'users.json']:
+              req = urllib.request.Request(base + '/' + fname + '?ref=main', headers=headers)
+              with urllib.request.urlopen(req) as r:
+                  data = json.loads(r.read())
+
+              content = base64.b64decode(data['content']).decode('utf-8')
+              with open(fname, 'w', encoding='utf-8') as f:
+                  f.write(content)
+
+              parsed = json.loads(content)
+              print(f'{fname}: {len(parsed)} records')
           EOF
 
       - name: Deploy to Azure Static Web Apps

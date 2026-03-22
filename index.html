@@ -1140,12 +1140,14 @@
     // Fetch posts and users from GitHub API (works for private repos)
     (async function injectPortalPosts() {
       var GH_API_BASE = 'https://api.github.com/repos/Buddika-A-Silva/Arctic-Tech-Guide/contents/';
-      var GH_TOKEN    = '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';
+      // Running this from client directly no token (for public repos) is recommended.
+      // For private repos, move this call into a secure server-side proxy
+      var GH_TOKEN    = null;
 
       async function ghFetch(file){
-        var r = await fetch(GH_API_BASE + file + '?ref=main', {
-          headers: { Authorization: 'token ' + GH_TOKEN }
-        });
+        var headers = {};
+        if(GH_TOKEN) headers.Authorization = 'token ' + GH_TOKEN;
+        var r = await fetch(GH_API_BASE + file + '?ref=main', { headers: headers });
         if(!r.ok) throw new Error(file + ' fetch failed: ' + r.status);
         var j = await r.json();
         return JSON.parse(atob(j.content.replace(/\n/g,'')));
