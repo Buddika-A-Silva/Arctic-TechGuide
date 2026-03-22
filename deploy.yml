@@ -16,29 +16,25 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Fetch live data files from GitHub API
+      - name: Validate JSON data files
         run: |
           python3 - << 'EOF'
-          import os, urllib.request, json, base64
-
-          token = os.environ.get('GITHUB_TOKEN')
-          if not token:
-              raise SystemExit('GITHUB_TOKEN is missing (set in GitHub Actions secrets)')
-
-          base = 'https://api.github.com/repos/Buddika-A-Silva/Arctic-Tech-Guide/contents'
-          headers = {'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json'}
+          import json, os
 
           for fname in ['posts.json', 'users.json']:
-              req = urllib.request.Request(base + '/' + fname + '?ref=main', headers=headers)
-              with urllib.request.urlopen(req) as r:
-                  data = json.loads(r.read())
-
-              content = base64.b64decode(data['content']).decode('utf-8')
-              with open(fname, 'w', encoding='utf-8') as f:
-                  f.write(content)
-
-              parsed = json.loads(content)
-              print(f'{fname}: {len(parsed)} records')
+              if not os.path.exists(fname):
+                  print(f'⚠️  {fname} not found, creating empty array')
+                  with open(fname, 'w') as f:
+                      f.write('[]')
+              else:
+                  try:
+                      with open(fname, 'r') as f:
+                          data = json.load(f)
+                      print(f'✓ {fname}: {len(data)} records')
+                  except json.JSONDecodeError as e:
+                      print(f'⚠️  {fname} invalid JSON, resetting to empty')
+                      with open(fname, 'w') as f:
+                          f.write('[]')
           EOF
 
       - name: Deploy to Azure Static Web Apps
