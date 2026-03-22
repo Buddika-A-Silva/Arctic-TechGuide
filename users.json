@@ -8,5 +8,15 @@
     "colorIdx": 0,
     "grad": "linear-gradient(135deg,#00d9ff,#0fa8ff)",
     "passwordHash": "ae3ac8a8"
+  },
+  {
+    "id": "user_1774192869963",
+    "name": "Dilan Ranasinghe",
+    "username": "dilan",
+    "role": "System Admin",
+    "email": "Dilanr@zillione.com",
+    "colorIdx": 0,
+    "grad": "linear-gradient(135deg,#00d9ff,#0fa8ff)",
+    "passwordHash": "102ea858"
   }
 ]
