@@ -21,13 +21,11 @@ jobs:
           python3 - << 'EOF'
           import urllib.request, json, base64
 
-          TOKEN = "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"
           BASE  = "https://api.github.com/repos/Buddika-A-Silva/Arctic-Tech-Guide/contents"
-          HDR   = {"Authorization": "token " + TOKEN}
 
           for f in ["posts.json", "users.json"]:
               try:
-                  req = urllib.request.Request(f"{BASE}/{f}?ref=main", headers=HDR)
+                  req = urllib.request.Request(f"{BASE}/{f}?ref=main")
                   res = json.loads(urllib.request.urlopen(req).read())
                   content = base64.b64decode(res["content"]).decode()
                   open(f, "w").write(content)
